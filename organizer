@@ -1,0 +1,38 @@
+#!/usr/bin/env ruby
+
+require 'thor'
+require 'exif'
+require 'fileutils'
+
+class Organizer < Thor
+  no_tasks do
+    def find_directory(directory, date)
+      directory_name = "#{directory}/#{date.strftime("%Y-%m-%d")}"
+      found_directory = Dir.glob("#{directory_name}*").detect do |filename|
+        File.directory?(filename)
+      end
+      return found_directory if found_directory
+      FileUtils.mkdir_p(directory_name)
+      directory_name
+    end
+  end
+
+  desc "organize DIRECTORY", "Organize"
+  def organize(base_directory="#{ENV["HOME"]}/Dropbox\ \(Personal\)/Camera\ Uploads")
+    Dir.glob("#{base_directory}/*").each do |filename|
+      next unless filename =~ /[jpg,jpeg]$/i
+      file = File.new(filename)
+      exif = begin Exif::Data.new(filename); rescue; nil; end
+      datetime = ((exif == nil || exif.date_time == nil) ? file.ctime : exif.date_time)
+      # puts "#{filename} :: #{file.ctime} :: #{File.ctime(filename)} :: #{exif ? exif.date_time : nil}" unless datetime
+      # puts "#{filename} :: #{file.ctime} :: #{File.ctime(filename)} :: #{exif ? exif.date_time : nil} :: #{find_directory(base_directory, datetime)}"
+      directory = find_directory(base_directory, datetime)
+      puts "Move [#{filename}] into [#{directory}]"
+      FileUtils.mv(filename, directory)
+      # puts directory
+    end
+  end
+
+end
+
+Organizer.start(ARGV)
