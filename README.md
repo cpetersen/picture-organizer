@@ -13,5 +13,5 @@ bundle exec organizer organize
 It defaults to organizing the directory `~/Dropbox (Personal)/Camera Uploads`, you may optionally pass a directory on the command line:
 
 ```sh
-bundle exec organizer /my/fancy/picture/directory
+bundle exec organizer organize /my/fancy/picture/directory
 ```
