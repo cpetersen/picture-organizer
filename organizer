@@ -27,9 +27,8 @@ class Organizer < Thor
       # puts "#{filename} :: #{file.ctime} :: #{File.ctime(filename)} :: #{exif ? exif.date_time : nil}" unless datetime
       # puts "#{filename} :: #{file.ctime} :: #{File.ctime(filename)} :: #{exif ? exif.date_time : nil} :: #{find_directory(base_directory, datetime)}"
       directory = find_directory(base_directory, datetime)
-      puts "Move [#{filename}] into [#{directory}]"
+      puts "Moving [#{filename}] into [#{directory}]"
       FileUtils.mv(filename, directory)
-      # puts directory
     end
   end
 
