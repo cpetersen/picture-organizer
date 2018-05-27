@@ -6,7 +6,7 @@ require 'fileutils'
 
 class Organizer < Thor
   no_tasks do
-    def find_directory(directory, date)
+    def find_directory(directory, date, dryrun)
       directory_name = "#{directory}/#{date.strftime("%Y-%m-%d")}"
       found_directory = Dir.glob("#{directory_name}*").detect do |filename|
         File.directory?(filename)
@@ -18,6 +18,7 @@ class Organizer < Thor
   end
 
   desc "organize DIRECTORY", "Organize"
+  option :dryrun, type: :boolean, default: false
   def organize(base_directory="#{ENV["HOME"]}/Dropbox\ \(Personal\)/Camera\ Uploads")
     Dir.glob("#{base_directory}/*").each do |filename|
       next unless filename =~ /[jpg,jpeg]$/i
@@ -26,9 +27,9 @@ class Organizer < Thor
       datetime = ((exif == nil || exif.date_time == nil) ? file.ctime : exif.date_time)
       # puts "#{filename} :: #{file.ctime} :: #{File.ctime(filename)} :: #{exif ? exif.date_time : nil}" unless datetime
       # puts "#{filename} :: #{file.ctime} :: #{File.ctime(filename)} :: #{exif ? exif.date_time : nil} :: #{find_directory(base_directory, datetime)}"
-      directory = find_directory(base_directory, datetime)
+      directory = find_directory(base_directory, datetime, options[:dryrun])
       puts "Moving [#{filename}] into [#{directory}]"
-      FileUtils.mv(filename, directory)
+      FileUtils.mv(filename, directory) unless options[:dryrun]
     end
   end
 

@@ -4,7 +4,13 @@ Picture organizer looks at all the pictures in a directory, creates directories 
 
 Dates are based off of the EXIF data, unless none exists, in which case it falls back to the file creation date.
 
-To run it:
+To perform a dryrun it (don't move anything):
+
+```sh
+bundle exec organizer organize --dryrun
+```
+
+To really run it:
 
 ```sh
 bundle exec organizer organize
